@@ -26,7 +26,7 @@ app.use("/api/attempts", attemptRoutes);
 
 
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected"))
+  .then(() => console.log("MongoDB Connected successfully"))
   .catch((err) => console.log(err));
 
 app.listen(process.env.PORT, () =>

@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
 
   classType: {
     type: String,
-    enum: ["CTE", "MNNS","SYSTEM"],
+    enum: ["CET", "MNNS","SYSTEM"],
     required: true,
   },
 });
