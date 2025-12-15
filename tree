@@ -1,0 +1,48 @@
+/quiz-backend
+  ├── package.json
+  ├── .env.example
+  ├── server.js
+  ├── controllers/
+  │    ├── authController.js
+  │    ├── questionController.js
+  │    ├── attemptController.js
+  │    └── reportController.js
+  ├── models/
+  │    ├── User.js
+  │    ├── Question.js
+  │    ├── Exam.js
+  │    ├── Attempt.js
+  │    └── UserAnswer.js
+  ├── routes/
+  │    ├── auth.js
+  │    ├── questions.js
+  │    ├── exams.js
+  │    └── attempts.js
+  ├── middleware/
+  │    └── auth.js
+  ├── utils/
+  │    └── pdfGenerator.js
+  └── scripts/
+       └── importQuestions.js      (CSV/JSON bulk import CLI)
+       
+/quiz-app (expo TS project)
+  ├── package.json
+  ├── App.tsx
+  ├── app.json
+  ├── tsconfig.json
+  ├── src/
+      ├── api.ts
+      ├── auth/
+      │   └── AuthContext.tsx
+      ├── screens/
+      │   ├── Auth/LoginScreen.tsx
+      │   ├── Auth/RegisterScreen.tsx
+      │   ├── Home/Dashboard.tsx
+      │   ├── Quiz/QuizScreen.tsx
+      │   ├── Quiz/ReviewScreen.tsx
+      │   ├── History/HistoryScreen.tsx
+      │   └── Questions/QuestionList.tsx
+      ├── navigation/
+      │   └── index.tsx
+      └── components/
+          └── QuestionCard.tsx
