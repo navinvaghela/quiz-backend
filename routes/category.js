@@ -5,7 +5,8 @@ import auth from "../middleware/auth.js";
 
 router.post("/", auth, async (req, res) => {
   try {
-    const category = await Category.create(req.body);
+    const categoryName = req.body?.categoryName?.toUpperCase();
+    const category = await Category.create({ categoryName });
     res.json(category);
   } catch (err) {
     res.status(500).json({ error: err.message });

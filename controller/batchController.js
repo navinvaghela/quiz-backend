@@ -17,7 +17,7 @@ export const uploadBatchFromFile = async (req, res) => {
     const batch = await Batch.create({
       batchName,
       batchDate,
-      category,
+      category: category.toUpperCase(),
       classType,
       batchCode
     });

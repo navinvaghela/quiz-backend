@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const categorySchema = new mongoose.Schema({
-  categoryName: String,
+  categoryName: { type: String, required: true },
   createdAt: { type: Date, default: Date.now }
 });
 
