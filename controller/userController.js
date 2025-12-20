@@ -14,7 +14,10 @@ export const getUsers = async (req, res) => {
 export const getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select("-password");
-    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+    if (!user)
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     res.json({ success: true, user });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -26,10 +29,21 @@ export const createUser = async (req, res) => {
   try {
     const { name, grno, contact, password, role, classType } = req.body;
     const existing = await User.findOne({ grno });
-    if (existing) return res.status(400).json({ success: false, message: "Gr. No already exists" });
+    if (existing)
+      return res
+        .status(400)
+        .json({ success: false, message: "Gr. No already exists" });
 
-    console.log("{ name, grno, contact, password, role, classType }", { name, grno, contact, password, role, classType })
-    const user = new User({ name, grno, contact, password, role, classType });
+    console.log("{ name, grno, contact, password, role, classType }", {
+      name,
+      grno,
+      contact,
+      password,
+      role,
+      classType,
+    });
+    const hashed = await bcrypt.hash(password, 10);
+    const user = new User({ name, grno, contact, password:hashed, role, classType });
     await user.save();
     res.json({ success: true, user: { ...user._doc, password: undefined } });
   } catch (err) {

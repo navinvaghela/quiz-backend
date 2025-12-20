@@ -18,12 +18,12 @@ const createAdmin = async () => {
             process.exit(0);
         }
 
-        const hashed = await bcrypt.hash("navin", 10);
+        const hashed = await bcrypt.hash("admin", 10);
         console.log("hashed",hashed)
 
         await User.create({
             name: "admin",
-            grno: "11111",
+            grno: "989898",
             password: hashed,
             role: "admin",
             classType: "SYSTEM"
