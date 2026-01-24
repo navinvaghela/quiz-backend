@@ -2,16 +2,67 @@ import Question from "../models/Question.js";
 import Batch from "../models/Batch.js";
 import Attempt from "../models/Attempt.js";
 
+const normalizeOptions = (options) => {
+  if (Array.isArray(options) && options.length > 1) {
+    return options.map(o => String(o).trim());
+  }
+
+  if (
+    Array.isArray(options) &&
+    options.length === 1 &&
+    typeof options[0] === "string"
+  ) {
+    return normalizeOptions(options[0]);
+  }
+
+  if (typeof options === "string") {
+    const trimmed = options.trim();
+
+    if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+      try {
+        return JSON.parse(trimmed).map(o => String(o).trim());
+      } catch {
+        return [];
+      }
+    }
+
+    if (trimmed.includes(",")) {
+      return trimmed
+        .split(",")
+        .map(o => o.trim())
+        .filter(Boolean);
+    }
+
+    return [];
+  }
+
+  return [];
+};
+
+
 export const uploadBatchFromFile = async (req, res) => {
   try {
-    const { batchName, batchDate, classType, category, questions, batchCode } = req.body;
+    const {
+      batchName,
+      batchDate,
+      classType,
+      category,
+      questions,
+      batchCode,
+    } = req.body;
 
     if (!batchName || !batchDate || !classType) {
-      return res.status(400).json({ success: false, message: "Missing fields" });
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields",
+      });
     }
 
     if (!questions || !Array.isArray(questions)) {
-      return res.status(400).json({ success: false, message: "Invalid questions" });
+      return res.status(400).json({
+        success: false,
+        message: "Invalid questions data",
+      });
     }
 
     const batch = await Batch.create({
@@ -19,18 +70,27 @@ export const uploadBatchFromFile = async (req, res) => {
       batchDate,
       category: category.toUpperCase(),
       classType,
-      batchCode
+      batchCode,
     });
 
     const questionIds = [];
 
     for (const q of questions) {
+      const parsedOptions = normalizeOptions(q.options);
+
+      if (!parsedOptions.length) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid options format for question: ${q.question}`,
+        });
+      }
+
       const newQ = await Question.create({
         question: q.question,
-        options: q.options,
-        correctOption: q.correctOption,
+        options: parsedOptions,
+        correctOption: String(q.correctOption),
         category: q.category.toUpperCase(),
-        batchId: batch._id
+        batchId: batch._id,
       });
 
       questionIds.push(newQ._id);
@@ -42,11 +102,14 @@ export const uploadBatchFromFile = async (req, res) => {
     res.json({
       success: true,
       message: "Batch uploaded successfully!",
-      batchId: batch._id
+      batchId: batch._id,
     });
-
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    console.error("UPLOAD ERROR:", err);
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 };
 
